@@ -29,7 +29,7 @@ index = similarities.MatrixSimilarity(tfidf[corpus])
 _, algorithm = dump.load('SVD')
 
 # define function to get similar products
-def recommend_products(product_id, num_recommendations):
+def recommend_products_content(product_id, num_recommendations):
     # get the similarity of the product with all other products
     sim = index[tfidf[corpus[product_id]]]
     # sort the similarity scores in descending order
@@ -81,7 +81,7 @@ def recommend_products_text(text, num_recommendations):
     return df_results
 
 # create a function to recommend top 5 products for a user in a table
-def recommend_products(user_id, n=5):
+def recommend_products_user(user_id, n=5):
     user_recs = []
     for product_id in df1['product_id'].unique():
         user_recs.append((product_id, algorithm.predict(user_id, product_id).est))
@@ -103,11 +103,11 @@ elif choice == 'Content-based Filtering':
     product_id = st.selectbox("Select a product:", df['product_name'])
     if product_id:
         product_id = df[df['product_name'] == product_id].index[0]
-        df_results = recommend_products(product_id, num_recommendations)
+        df_results = recommend_products_content(product_id, num_recommendations)
         st.write(df_results)
 
     # display pictures of recommended products
-    st.write("### Recommended products:")
+    st.write("Recommended products:")
     for i in range(num_recommendations):
         st.write(df_results['product_name'].iloc[i])
         st.image(df['image'].iloc[df_results['product_id'].iloc[i]], width=200)
@@ -132,7 +132,7 @@ elif choice == 'Collaborative Filtering':
     user_id = df1[df1['user'] == user_name].index[0]
 
     # get top 5 recommended products for the user
-    user_recs = recommend_products(user_id)
+    user_recs = recommend_products_user(user_id)
     st.write("### Recommended products:")
     for i in range(5):
         st.write(df2['product_name'].iloc[user_recs[i][0]])
